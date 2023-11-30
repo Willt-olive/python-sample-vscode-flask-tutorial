@@ -10,9 +10,11 @@ resources:
 
 variables:
   # Container registry service connection established during pipeline creation
+  azureSubscription: 'e3a92530-350d-41ab-8015-2653f3ad62e4'
+  appName: 'Cloud-lab-5'
+  containerRegistry: 'cloudlab5.azurecr.io'
   dockerRegistryServiceConnection: '24710db2-8f7c-47cf-9fd3-e02ccb1c6d4d'
   imageRepository: 'willtolivepythonsamplevscodeflasktutorial'
-  containerRegistry: 'cloudlab5.azurecr.io'
   dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
   tag: '$(Build.BuildId)'
 
@@ -37,3 +39,11 @@ stages:
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: |
           $(tag)
+
+    ## Add the below snippet at the end of your pipeline
+    - task: AzureWebAppContainer@1
+      displayName: 'Azure Web App on Container Deploy'
+      inputs:
+        azureSubscription: $(azureSubscription)
+        appName: $(appName)
+        containers: $(containerRegistry)/$(imageRepository):$(tag)
